@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>MedBlocks | The protocol for decentralised medical records</title>
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    <link rel="stylesheet" href="static/main.css">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon.png">
+</head>
+
+<body class="has-navbar-fixed-top">
+    <nav class="navbar is-fixed-top has-shadow">
+        <div class="container">
+            <div class="navbar-brand">
+            <a class="navbar-item logoHolder" href="https://medblocks.org">
+                <span class="logo">
+                    <img src="/static/favicon.png" alt="logo" srcset="">
+                </span>
+                <span>
+                    <h2 class="title is-size-4 logoText">MedBlocks</h2>
+                </span>
+            </a>
+            <span class="navbar-burger burger" onclick="toggleNav()" data-target="navbarMenuHeroA">
+                <span></span>
+                <span></span>
+                <span></span>
+            </span>
+            </div>
+            <div id="navbarMenuHeroA" class="navbar-menu">
+            <div class="navbar-end">
+                <div class="navbar-start">
+                    <div class="navbar-item">
+                        <a href="https://medblocks.org/jobs" class="button is-white">
+                            <!-- <span class="icon">
+                                <i class="fas fa-briefcase"></i>
+                            </span> -->
+                            <span>Jobs</span></a>
+                    </div>
+                </div>
+                <span class="navbar-item">
+                <a class="button is-white" href="https://medium.com/@sidharth_ramesh/introducing-medblocks-storing-medical-records-securely-on-the-interplanetary-file-system-using-20f4e88c9bda">
+                    <span class="icon"><i class="fab fa-medium-m"></i></span><span>Blog</span>
+                </a>
+                </span>
+                <div class="navbar-item">
+                    <a class="button is-white" href="https://github.com/sidharthramesh/medblocks">
+                        <span class="icon">
+                        <i class="fab fa-github"></i>
+                        </span>
+                    </a>
+                </div>
+            </div>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero is-fullheight-with-navbar">
+            <div class="hero-body">
+                <div class="container has-text-centered">
+                <figure>
+                        <img src="/static/analysis.png" alt="" srcset="" width="20%">
+                </figure>
+                <h1 class="title">Homomorphic Encryption Capsule Service</h1>
+                <h1 class="subtitle has-text-grey">
+                    Anonymous analytics made possible using encryption
+                </h1>
+                    <h1 class="subtitle has-text-centered">
+                    <a href="demo/" class="button">
+                        <span>View demo</span>
+                    </a>
+                    <a href="api/" class="button is-success">
+                        <span>Browse API</span> <span class="icon"> <i class="fas fa-arrow-right"></i> </span>
+                    </a>
+                </h1>
+                </h1>
+                </div>
+            </div>
+        </section>
+        <section class="section">
+            <div class="container">
+                <div class="content">
+                    <h1 class="has-text-centered">Documentation</h1>
+                    <h3>Capsule Service</h3>       
+                        <h3>
+                            GET  /api/capsule/publicKey/
+                        </h3>
+                        <p>Gets the Homomorphic Public Key for encrypting results</p>
+
+                        <h3>
+                            POST  /api/capsule/decrypt
+                        </h3>
+                        <p>Aggregated Decryption using Pailler encryption scheme</p>
+                    <hr>
+                    <h3>Email Verification Service</h3>
+
+                        <h3>POST  /api/verify/</h3>
+                        <p>Post the email that needs verification</p>
+
+                        <h3>GET /api/verify/email@example.com/verification-code</h3>
+                        <p>Verifies the code sent to the email and publishes transaction on the Tangle signed by medblocks.org</p>
+                    <hr>
+                </div>
+            </div>
+        </section>
+    <footer class="footer">
+        <div class="content has-text-centered">
+                <p >
+                  MedBlocks © All rights reserved.
+                </p>
+                <p>For communications <strong><a href="mailto:contact@medblocks.com">contact@medblocks.com</a></strong></p>
+        </div>
+</footer>
+</body>
+<script>
+function toggleNav() {
+document.querySelector('#navbarMenuHeroA').classList.toggle('is-active');}
+</script>
+</html>

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>BMI Demo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css">
+    
+</head>
+
+<body>
+    <section class="section" id="bmiform">
+        <h1 class="title has-text-centered">Encrypted BMI Calculator Demo</h1>
+        <div class="container">
+            <form action="" class="form" @submit.prevent="handleSubmit">
+                    <div class="field">
+                        <label class="label">Email</label>
+                        <input required class="input" type="email" name="" id="" v-model="bmiData.email">
+                    </div>
+                    <div class="field">
+                        <label for="" class="label">Height (cms)</label>
+                        <input required class="input" type="number" name="" id="" v-model="height">
+                    </div>
+                    <div class="field">
+                        <label for="" class="label">Weight (kg)</label>
+                        <input required type="number" class="input" v-model="weight">
+                    </div>
+                    <button type="submit" class="button" :class="{'is-loading':encrypting}">Submit </button> 
+                    <div class="field" :class="{'is-hidden':!encrypting}">
+                        <p>Encrypting...</p>
+                    </div>
+                    
+            </form>
+        </div>
+        <hr>
+        <div class="container">
+            <h1 class="subtitle">Database</h1>
+                <table class="table">
+                        <thead>
+                            <tr>
+                                <!--<th>Email</th>-->
+                                <th>Underweight</th>
+                                <th>Normal</th>
+                                <th>Overweight</th>
+                                <th>Obese</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {%verbatim%}
+                            <tr v-for="entry in records">
+                                <!--<td>{{entry.email}}</td>-->
+                                <td>{{entry.underweight.substring(0,20)}}...</td>
+                                <td>{{entry.normal.substring(0,20)}}...</td>
+                                <td>{{entry.overweight.substring(0,20)}}...</td>
+                                <td>{{entry.obese.substring(0,20)}}...</td>
+                            </tr>
+                            {%endverbatim%}
+                        </tbody>
+            
+                </table>
+            </div>
+            <hr>
+            <div class="container">
+                <h1 class="subtitle">
+                    Aggregate, Decrypt and Analyse
+                </h1>
+                <button class="button is-info" :class="{'is-loading':decrypting}" @click="getResult()">
+                        View Result
+                </button>
+                <div id="chartContainer" style="height: 300px; width: 100%;"></div>
+                <p><p :class="{'is-hidden': !decrypting}">Decrypting Results...</p></p>
+                    <div class="columns">
+                        <div class="column">
+                            <div class="content">
+                                
+                                {%verbatim%}
+                                {{result}}
+                                {%endverbatim%}
+                            </div>
+                        </div>
+                    </div>
+                </h1>
+            </div>
+    </section>
+        
+        
+    <script src="/static/jsbn/jsbn.js"></script>
+    <script src="/static/jsbn/jsbn2.js"></script>
+    <script src="/static/jsbn/prng4.js"></script>
+    <script src="/static/jsbn/rng.js"></script>
+    <script src="/static/axios.min.js"></script>
+    <script src="/static/paillier.js"></script>     
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="/static/canvasjs.min.js"></script>
+    <script>
+        var publicKey;
+
+        async function getPublicKey (capsule = "https://dev.medblocks.org/api/capsule/") {
+            if (!publicKey) {
+                let response = await axios.get(capsule+"publicKey/");
+                let n = response.data.n;
+                publicKey = new paillier.publicKey(1024, new BigInteger(n));
+                return publicKey;
+            }
+            else {
+                return publicKey;
+            }
+        }
+
+        async function encrypt (number) {
+            let pk = await getPublicKey();
+            let encrypted = pk.encrypt(nbv(number));
+            return encrypted;
+        };
+        
+
+
+        // async function add (numbers) {
+        //     let pk = await getPublicKey();
+        //     let added = numbers.reduce(function (ass, num, i) {
+        //         if (i === 0) {
+        //             return num;
+        //         }
+        //         else {
+        //             return publicKey.add(numbers, ass);
+        //         }
+        //     }, undefined);
+        //     return added;
+        // };
+
+        // (async () => {
+        //     nums = await Promise.all([encrypt(2), encrypt(3)]);
+        //     woo = await add(nums);
+        //     console.log(woo.toString());
+        // })();
+    </script>
+    <script>
+    
+    function createChart(data){   
+        
+        var dataPoints = [];
+        var chart = new CanvasJS.Chart("chartContainer", {
+            animationEnabled: true,
+            theme: "light2",
+            title: {
+            text: "Result"
+            },
+            axisY: {
+                title: "Count",
+                titleFontSize: 24
+            },
+            axisX: {
+		        title: "Category",
+		        titleFontSize: 24
+	},
+            data: [{
+                type: "column",
+                yValueFormatString: "#,### Units",
+                dataPoints: dataPoints
+            }]
+        });
+        addData()
+    
+
+    function addData() {
+        dataPoints.push({
+            label: "underweight",
+            y: data.data.underweight
+        });
+        
+        dataPoints.push({
+            label: "overweight",
+            y: data.data.overweight
+        });
+        dataPoints.push({
+            label: "obese",
+            y: data.data.obese
+        });
+        dataPoints.push({
+            label: "normal",
+            y: data.data.normal
+        });
+        
+        chart.render();
+    }
+}
+
+
+        new Vue({
+            el:'#bmiform',
+            data: {
+                height: '',
+                weight:'',
+                bmiData:{
+                    email: '',
+                    underweight: '',
+                    normal: '',
+                    overweight: '',
+                    obese: ''
+                },
+                result: '',
+                records: '',
+                encrypting: false,
+                decrypting: false
+            },
+            async mounted() {
+                await this.getRecords()
+            },
+            methods: {
+                async getRecords() {
+                    r = await axios.get('bmi/')
+                    data = r['data']
+                    this.records = data
+                },
+                async getResult() {
+                    this.decrypting = true
+                    r = await axios.get('aggregate/')
+                    data = r['data']
+                    this.result = data
+                    this.decrypting = false
+                    createChart(this.result)
+                    
+                    console.log(JSON.stringify(this.result));
+                },
+                async handleSubmit() {
+                    // loading UI
+                    this.encrypting = true
+                    // initialize with 0 in all categories
+                    this.bmiData.underweight = await encrypt(0);
+                    this.bmiData.normal = await encrypt(0);
+                    this.bmiData.overweight = await encrypt(0);
+                    this.bmiData.obese = await encrypt(0);
+
+                    // Calculate and categorize bmi
+                    bmi = this.weight/((this.height/100)*(this.height/100))
+                    if (bmi < 18) {
+                        this.bmiData.underweight = await encrypt(1)
+                    }
+                    if (bmi >= 18 && bmi <=25) {
+                        this.bmiData.normal = await encrypt(1)
+                    }
+
+                    if (bmi > 25 && bmi <30) {
+                        this.bmiData.overweight = await encrypt(1)
+                    }
+
+                    if (bmi >= 30){
+                        this.bmiData.obese = await encrypt(1)
+                    }
+                    
+                    this.bmiData.underweight = this.bmiData.underweight.toString()
+                    this.bmiData.normal = this.bmiData.normal.toString()
+                    this.bmiData.overweight = this.bmiData.overweight.toString()
+                    this.bmiData.obese = this.bmiData.obese.toString()
+                    axios.post(
+                        'bmi/',
+                        this.bmiData
+                    )
+                    .then(r=>{
+                        this.height = ''
+                        this.weight = ''
+                        this.bmiData = {
+                            email: '',
+                            underweight: '',
+                            normal: '',
+                            overweight: '',
+                            obese: ''
+                            }
+                    })
+                    .then(r=>{this.getRecords(); this.encrypting = false})
+                }
+            }
+        }
+        )
+    </script>
+</body>
+</html>
