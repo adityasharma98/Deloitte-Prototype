@@ -1,6 +1,4 @@
-# MedBlocks Oracle Service
-The MedBlocks Oracle Service is hosted by the MedBlocks Foundation (dev.medblocks.org) for various services that is needed by the protocol.
-Currently the following are implemented
+
  - Capsule service for Aggregated Homomorphic Encryption
 
 ## Installation
